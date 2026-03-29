@@ -3,710 +3,739 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekordbox → Serato | Convert Your DJ Library</title>
+    <title>Rekordbox to Serato | Migrate Your DJ Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
+        :root {
+            --bg-primary: #08080a;
+            --bg-elevated: rgba(255,255,255,0.03);
+            --bg-card: rgba(255,255,255,0.05);
+            --bg-card-hover: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --text-primary: #f0f0f0;
+            --text-secondary: #8a8f98;
+            --text-muted: #55585e;
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --accent-glow: rgba(108,92,231,0.3);
+            --green: #00cec9;
+            --green-glow: rgba(0,206,201,0.2);
+            --red: #ff6b6b;
+            --radius: 16px;
+            --radius-sm: 10px;
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* ===== MESH GRADIENT BACKGROUND ===== */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-mesh::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            top: -200px; left: -200px;
+            background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, transparent 70%);
+            animation: float1 20s ease-in-out infinite;
+        }
+        .bg-mesh::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            bottom: -100px; right: -100px;
+            background: radial-gradient(circle, rgba(0,206,201,0.1) 0%, transparent 70%);
+            animation: float2 25s ease-in-out infinite;
+        }
+        @keyframes float1 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(100px,50px) scale(1.1); }
+            66% { transform: translate(-50px,100px) scale(0.9); }
+        }
+        @keyframes float2 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(-80px,-40px) scale(1.15); }
+            66% { transform: translate(60px,-80px) scale(0.95); }
+        }
+
+        /* ===== GRAIN OVERLAY ===== */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.4;
+        }
+
+        /* ===== LAYOUT ===== */
+        .relative { position: relative; z-index: 2; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 2rem; }
+        section { padding: 6rem 0; }
+
+        /* ===== HEADER ===== */
         header {
-            background: rgba(15, 15, 30, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(8,8,10,0.7);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
-
         header .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 64px;
         }
-
-        header .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.5px;
+        .logo {
+            font-size: 1.1rem; font-weight: 700; color: var(--text-primary);
+            letter-spacing: -0.3px;
         }
-
-        header .logo span {
-            color: #e94560;
+        .logo span { color: var(--accent-light); }
+        nav { display: flex; align-items: center; gap: 2rem; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.875rem; font-weight: 500;
+            transition: color 0.2s;
         }
-
-        header nav a {
-            color: #b0b0b0;
-            text-decoration: none;
-            margin-left: 2rem;
-            transition: color 0.3s ease;
+        nav a:hover { color: var(--text-primary); }
+        .nav-lang {
+            padding: 0.3rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.8rem;
         }
+        .nav-lang:hover { border-color: var(--border-hover); }
 
-        header nav a:hover {
-            color: #e94560;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        section {
-            padding: 5rem 2rem;
-        }
-
-        /* Hero Section */
+        /* ===== HERO ===== */
         .hero {
+            padding: 8rem 0 6rem;
             text-align: center;
-            padding: 7rem 2rem;
-            background: linear-gradient(180deg, rgba(233, 69, 96, 0.1) 0%, transparent 100%);
-            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
+            position: relative;
         }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            color: #ffffff;
-            line-height: 1.2;
-            animation: fadeInDown 0.8s ease;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            color: #a0a0a0;
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.8rem; color: var(--text-secondary);
             margin-bottom: 2rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            animation: fadeInUp 0.8s ease 0.2s both;
+            background: var(--bg-card);
+        }
+        .hero-badge .dot {
+            width: 6px; height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a29bfe 50%, #00cec9 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+        .hero-actions {
+            display: flex; gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
-            color: #ffffff;
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 600;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeInUp 0.8s ease 0.4s both;
+            cursor: pointer; border: none;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            background: #7c6ef0;
+            box-shadow: 0 0 50px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+        }
+        .btn-icon { font-size: 1.1rem; }
+
+        .hero-note {
+            margin-top: 1.5rem;
+            font-size: 0.8rem; color: var(--text-muted);
         }
 
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(233, 69, 96, 0.3);
-        }
-
-        .cta-button:active {
-            transform: translateY(0);
-        }
-
-        /* Features Section */
-        .features {
-            background: rgba(26, 26, 46, 0.5);
-        }
-
-        .features h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #ffffff;
-        }
-
+        /* ===== FEATURES ===== */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            gap: 1px;
+            background: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
-
         .feature-card {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(233, 69, 96, 0.2);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
+            background: var(--bg-primary);
+            padding: 2.5rem;
+            transition: background 0.3s;
         }
-
-        .feature-card:hover {
-            border-color: rgba(233, 69, 96, 0.5);
-            background: rgba(26, 26, 46, 1);
-            transform: translateY(-5px);
-        }
-
+        .feature-card:hover { background: var(--bg-card); }
         .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
         }
-
         .feature-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-            color: #ffffff;
+            font-size: 1rem; font-weight: 600;
+            margin-bottom: 0.6rem;
         }
-
         .feature-card p {
-            color: #a0a0a0;
-            font-size: 0.95rem;
+            font-size: 0.875rem; color: var(--text-secondary);
+            line-height: 1.6;
         }
 
-        /* How It Works */
-        .how-it-works {
-            background: rgba(26, 26, 46, 0.3);
-        }
-
-        .how-it-works h2 {
-            font-size: 2.5rem;
+        /* ===== SECTION HEADERS ===== */
+        .section-header {
             text-align: center;
-            margin-bottom: 3rem;
-            color: #ffffff;
+            margin-bottom: 4rem;
+        }
+        .section-label {
+            font-size: 0.75rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--accent-light);
+            margin-bottom: 0.8rem;
+        }
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
-        .steps {
+        /* ===== HOW IT WORKS ===== */
+        .steps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             max-width: 900px;
             margin: 0 auto;
         }
-
-        .step {
+        .step-card {
             text-align: center;
+            padding: 2rem;
             position: relative;
         }
-
-        .step-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
-            color: #ffffff;
-            border-radius: 50%;
-            font-size: 1.8rem;
-            font-weight: 700;
+        .step-num {
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
             margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            font-size: 1.1rem; font-weight: 700; color: #fff;
+        }
+        .step-card h3 {
+            font-size: 1.05rem; font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .step-card p {
+            font-size: 0.875rem; color: var(--text-secondary);
         }
 
-        .step h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-            color: #ffffff;
+        /* ===== WHAT TRANSFERS ===== */
+        .transfer-list {
+            max-width: 560px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 0;
         }
-
-        .step p {
-            color: #a0a0a0;
-        }
-
-        /* What Gets Transferred */
-        .what-transfers {
-            background: rgba(26, 26, 46, 0.5);
-        }
-
-        .what-transfers h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #ffffff;
-        }
-
-        .checklist {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
-            color: #e0e0e0;
-        }
-
-        .checklist-item:last-child {
-            border-bottom: none;
-        }
-
-        .checklist-icon {
-            color: #e94560;
-            font-weight: bold;
-            margin-right: 1rem;
-            font-size: 1.2rem;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            background: rgba(26, 26, 46, 0.3);
-            text-align: center;
-        }
-
-        .pricing h2 {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #ffffff;
-        }
-
-        .pricing-card {
-            max-width: 400px;
-            margin: 0 auto;
-            background: rgba(26, 26, 46, 0.9);
-            border: 2px solid rgba(233, 69, 96, 0.3);
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .pricing-card:hover {
-            border-color: rgba(233, 69, 96, 0.7);
-            background: rgba(26, 26, 46, 1);
-        }
-
-        .price {
-            font-size: 3.5rem;
-            color: #e94560;
-            font-weight: 700;
-            margin: 1rem 0;
-        }
-
-        .price-label {
-            font-size: 1rem;
-            color: #a0a0a0;
-            margin-bottom: 2rem;
-        }
-
-        .trial-note {
-            background: rgba(233, 69, 96, 0.1);
-            border: 1px solid rgba(233, 69, 96, 0.3);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-            color: #b0b0b0;
+        .transfer-item {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1.1rem 0;
+            border-bottom: 1px solid var(--border);
             font-size: 0.95rem;
         }
+        .transfer-item:last-child { border-bottom: none; }
+        .transfer-check {
+            width: 24px; height: 24px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--green-glow);
+            border-radius: 50%;
+            color: var(--green); font-size: 0.75rem; font-weight: 700;
+        }
 
-        .pricing-button {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
+        /* ===== PRICING ===== */
+        .pricing-wrapper {
+            max-width: 420px; margin: 0 auto;
+        }
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3rem 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--green));
+        }
+        .pricing-card h3 {
+            font-size: 1rem; font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .price-row {
+            display: flex; align-items: baseline;
+            justify-content: center; gap: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .price-amount {
+            font-size: 3.5rem; font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+        .price-currency {
+            font-size: 1rem; color: var(--text-secondary); font-weight: 500;
+        }
+        .price-desc {
+            font-size: 0.85rem; color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 2rem;
+            display: flex; flex-direction: column; gap: 0.7rem;
+        }
+        .pricing-feature {
+            display: flex; align-items: center; gap: 0.7rem;
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
+        .pricing-feature .pf-icon {
+            color: var(--green); font-size: 0.8rem;
+        }
+
+        /* ===== PURCHASE FORM ===== */
+        .buy-form { margin-top: 0.5rem; }
+        .buy-form input {
             width: 100%;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.75rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
         }
-
-        .pricing-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(233, 69, 96, 0.3);
-        }
-
-        /* FAQ Section */
-        .faq {
-            background: rgba(26, 26, 46, 0.5);
-        }
-
-        .faq h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #ffffff;
-        }
-
-        .faq-container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: rgba(26, 26, 46, 0.7);
-            border: 1px solid rgba(233, 69, 96, 0.2);
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 1.5rem;
+        .buy-form input:focus { border-color: var(--accent); }
+        .buy-form input::placeholder { color: var(--text-muted); }
+        .buy-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--accent);
+            color: #fff;
+            border: none; border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 600;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: #ffffff;
-            transition: background 0.3s ease;
+            font-family: inherit;
+            transition: all 0.25s;
+            box-shadow: 0 0 30px var(--accent-glow);
         }
-
-        .faq-question:hover {
-            background: rgba(233, 69, 96, 0.1);
+        .buy-btn:hover {
+            background: #7c6ef0;
+            box-shadow: 0 0 50px var(--accent-glow);
         }
-
-        .faq-toggle {
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
+        .buy-btn:disabled { opacity: 0.6; cursor: wait; }
+        .buy-status {
+            display: none; margin-top: 0.75rem;
+            padding: 0.85rem; border-radius: var(--radius-sm);
+            font-size: 0.85rem;
         }
-
-        .faq-item.active .faq-toggle {
-            transform: rotate(180deg);
+        .buy-note {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-top: 0.75rem;
         }
+        .buy-note a { color: var(--accent-light); text-decoration: none; }
+        .buy-note a:hover { text-decoration: underline; }
 
-        .faq-answer {
-            max-height: 0;
+        /* ===== COMPARISON TABLE ===== */
+        .compare-section {
+            margin-top: 4rem; max-width: 720px; margin-left: auto; margin-right: auto;
+        }
+        .compare-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .compare-table th {
+            padding: 0.9rem 1rem; text-align: left;
+            color: var(--text-muted); font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .compare-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table .row-ours { background: rgba(108,92,231,0.06); }
+        .compare-table .row-ours td { color: var(--text-primary); font-weight: 500; }
+        .compare-table .cell-yes { color: var(--green); }
+        .compare-table .cell-no { color: var(--red); }
+
+        /* ===== FAQ ===== */
+        .faq-list {
+            max-width: 680px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
             overflow: hidden;
-            transition: max-height 0.3s ease;
-            color: #a0a0a0;
+            transition: border-color 0.2s;
+        }
+        .faq-item:hover { border-color: var(--border-hover); }
+        .faq-q {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.95rem; font-weight: 500;
+            transition: background 0.2s;
+        }
+        .faq-q:hover { background: var(--bg-card); }
+        .faq-arrow {
+            font-size: 0.7rem; color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .faq-item.open .faq-arrow { transform: rotate(180deg); }
+        .faq-a {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: var(--text-secondary);
+            font-size: 0.9rem; line-height: 1.7;
+        }
+        .faq-item.open .faq-a {
+            max-height: 300px;
+            padding: 0 1.5rem 1.2rem;
         }
 
-        .faq-item.active .faq-answer {
-            max-height: 500px;
-            padding: 0 1.5rem 1.5rem;
-        }
-
-        /* Footer */
+        /* ===== FOOTER ===== */
         footer {
-            background: rgba(15, 15, 30, 0.95);
-            border-top: 1px solid rgba(233, 69, 96, 0.1);
-            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
             text-align: center;
-            color: #808080;
         }
-
-        footer .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
         footer p {
-            margin: 0.5rem 0;
+            font-size: 0.8rem; color: var(--text-muted);
+            margin: 0.3rem 0;
         }
+        footer a { color: var(--text-secondary); text-decoration: none; }
+        footer a:hover { color: var(--text-primary); }
 
-        footer a {
-            color: #e94560;
-            text-decoration: none;
-            transition: color 0.3s ease;
+        /* ===== ANIMATIONS ===== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        footer a:hover {
-            color: #ff5a7a;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Intersection Observer animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Responsive */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .features h2,
-            .how-it-works h2,
-            .what-transfers h2,
-            .pricing h2,
-            .faq h2 {
-                font-size: 2rem;
-            }
-
-            header nav {
-                display: none;
-            }
-
-            section {
-                padding: 3rem 1.5rem;
-            }
-
-            .hero {
-                padding: 5rem 1.5rem;
-            }
+            section { padding: 4rem 0; }
+            .hero { padding: 5rem 0 4rem; }
+            nav { gap: 1rem; }
+            nav a { font-size: 0.8rem; }
+            .steps-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .pricing-card { padding: 2rem 1.5rem; }
+            .hero-actions { flex-direction: column; align-items: center; }
+        }
+        @media (max-width: 480px) {
+            nav .nav-hide { display: none; }
         }
     </style>
 </head>
 <body>
+    <div class="bg-mesh"></div>
+    <div class="relative">
+
     <header>
         <div class="container">
-            <div class="logo">Rekordbox → <span>Serato</span></div>
+            <div class="logo">R2S <span>converter</span></div>
             <nav>
-                <a href="#features">Features</a>
-                <a href="#how">How It Works</a>
+                <a href="#features" class="nav-hide">Features</a>
+                <a href="#how" class="nav-hide">How it works</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#faq">FAQ</a>
-                <a href="ru.html" style="padding:0.3rem 0.8rem;border:1px solid rgba(233,69,96,0.3);border-radius:4px;font-size:0.85rem">RU</a>
+                <a href="#faq" class="nav-hide">FAQ</a>
+                <a href="ru.html" class="nav-lang">RU</a>
             </nav>
         </div>
     </header>
 
-    <section class="hero" id="buy">
-        <h1>Switch DJ software without losing your library</h1>
-        <p>Tired of the tedious process of migrating from Rekordbox to Serato? We make it painless. Transfer your playlists, cue points, and metadata in seconds.</p>
-        <a href="#pricing" class="cta-button">Buy Now — $10 USDT</a>
-        <p style="font-size:0.85rem;color:#666;margin-top:1rem;animation:fadeInUp 0.8s ease 0.6s both">Free trial: 10 tracks included, no credit card needed</p>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge"><span class="dot"></span> macOS native app</div>
+            <h1>Switch from Rekordbox<br>to Serato in seconds</h1>
+            <p>Import playlists, hot cues, BPM and keys directly from your Pioneer USB. No re-analysis, no manual work.</p>
+            <div class="hero-actions">
+                <a href="#download" class="btn btn-primary">
+                    <span class="btn-icon">&#8595;</span> Download Free Trial
+                </a>
+                <a href="#pricing" class="btn btn-secondary">
+                    Buy License &mdash; $10
+                </a>
+            </div>
+            <p class="hero-note">Free trial includes 10 tracks. macOS 12+ required.</p>
+        </div>
     </section>
 
-    <section class="features" id="features">
+    <!-- ===== FEATURES ===== -->
+    <section id="features">
         <div class="container">
-            <h2>Why DJs Love Us</h2>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">💾</div>
+            <div class="section-header">
+                <div class="section-label">Features</div>
+                <h2>Everything you need to migrate</h2>
+            </div>
+            <div class="features-grid reveal">
+                <div class="feature-card">
+                    <div class="feature-icon">&#128190;</div>
                     <h3>Pioneer USB Import</h3>
-                    <p>Direct import from Pioneer flash drives. No confusing database formats or manual parsing.</p>
+                    <p>Read directly from Pioneer flash drives. No XML export required.</p>
                 </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🎵</div>
-                    <h3>Full Metadata Transfer</h3>
-                    <p>BPM, KEY, hot cues, and playlists preserved exactly as you configured them.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127925;</div>
+                    <h3>Full Metadata</h3>
+                    <p>BPM, musical key, hot cues with colors preserved exactly as set.</p>
                 </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">⚡</div>
-                    <h3>One-Click Migration</h3>
-                    <p>No manual work, no re-analysis needed. Your library is ready to go immediately.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9889;</div>
+                    <h3>One-Click Transfer</h3>
+                    <p>Select playlists, click import. Your library is ready in Serato.</p>
                 </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🍎</div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#63743;</div>
                     <h3>macOS Native</h3>
-                    <p>Clean dark UI, lightweight, fast. No Java dependencies or bloatware.</p>
+                    <p>Clean dark UI. Lightweight. No Java, no bloat.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="how-it-works" id="how">
+    <!-- ===== HOW IT WORKS ===== -->
+    <section id="how" style="background: var(--bg-elevated);">
         <div class="container">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step fade-in">
-                    <div class="step-number">1</div>
-                    <h3>Plug in your Pioneer USB</h3>
-                    <p>Connect your USB flash drive with your Rekordbox library</p>
+            <div class="section-header">
+                <div class="section-label">How it works</div>
+                <h2>Three steps to freedom</h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-num">1</div>
+                    <h3>Plug in your USB</h3>
+                    <p>Connect the Pioneer flash drive with your Rekordbox export</p>
                 </div>
-                <div class="step fade-in">
-                    <div class="step-number">2</div>
-                    <h3>Click Import</h3>
-                    <p>Select the playlists and collections you want to transfer</p>
+                <div class="step-card reveal">
+                    <div class="step-num">2</div>
+                    <h3>Pick playlists</h3>
+                    <p>Choose which playlists and collections to transfer</p>
                 </div>
-                <div class="step fade-in">
-                    <div class="step-number">3</div>
-                    <h3>Open Serato — everything is there</h3>
-                    <p>Your library, cues, BPM, keys, all ready to perform</p>
+                <div class="step-card reveal">
+                    <div class="step-num">3</div>
+                    <h3>Open Serato</h3>
+                    <p>Your library, cues, BPM, keys are all there. Ready to play.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="what-transfers">
+    <!-- ===== WHAT TRANSFERS ===== -->
+    <section>
         <div class="container">
-            <h2>What Gets Transferred</h2>
-            <div class="checklist">
-                <div class="checklist-item">
-                    <div class="checklist-icon">✅</div>
-                    <span>Playlists with track order</span>
-                </div>
-                <div class="checklist-item">
-                    <div class="checklist-icon">✅</div>
-                    <span>Hot cue points (all colors)</span>
-                </div>
-                <div class="checklist-item">
-                    <div class="checklist-icon">✅</div>
-                    <span>BPM and KEY</span>
-                </div>
-                <div class="checklist-item">
-                    <div class="checklist-icon">✅</div>
-                    <span>Track metadata (artist, title, album, genre)</span>
-                </div>
-                <div class="checklist-item">
-                    <div class="checklist-icon">✅</div>
-                    <span>Works with AIFF, MP3, M4A, FLAC, WAV</span>
-                </div>
+            <div class="section-header">
+                <div class="section-label">Details</div>
+                <h2>What gets transferred</h2>
+            </div>
+            <div class="transfer-list reveal">
+                <div class="transfer-item"><div class="transfer-check">&#10003;</div>Playlists with original track order</div>
+                <div class="transfer-item"><div class="transfer-check">&#10003;</div>Hot cue points with colors</div>
+                <div class="transfer-item"><div class="transfer-check">&#10003;</div>BPM and musical key</div>
+                <div class="transfer-item"><div class="transfer-check">&#10003;</div>Artist, title, album, genre metadata</div>
+                <div class="transfer-item"><div class="transfer-check">&#10003;</div>AIFF, MP3, M4A, FLAC, WAV formats</div>
             </div>
         </div>
     </section>
 
-    <section class="pricing" id="pricing">
+    <!-- ===== DOWNLOAD ===== -->
+    <section id="download" style="background: var(--bg-elevated);">
+        <div class="container" style="text-align:center;">
+            <div class="section-header">
+                <div class="section-label">Download</div>
+                <h2>Try it free</h2>
+            </div>
+            <p style="color:var(--text-secondary);max-width:480px;margin:0 auto 2rem;font-size:0.95rem;">
+                Download the app, import 10 tracks for free. No registration, no email required. Buy a license key when you're ready to unlock unlimited imports.
+            </p>
+            <a href="#" class="btn btn-primary" style="padding:1rem 2.5rem;font-size:1.05rem;" id="downloadBtn">
+                <span class="btn-icon">&#8595;</span> Download for macOS
+            </a>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:1rem;">
+                v1.0 &middot; macOS 12+ &middot; Apple Silicon & Intel &middot; ~5 MB
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section id="pricing">
         <div class="container">
-            <h2>Get Started</h2>
-            <div class="pricing-card fade-in">
-                <h3>One-Time Purchase</h3>
-                <div class="price">$10 <span style="font-size:1.2rem;color:#a0a0a0">USDT</span></div>
-                <div class="price-label">Pay once — use forever. No subscription.</div>
-                <div class="trial-note">Free trial: 10 tracks included. No registration.</div>
-                <div style="text-align:left;margin:1.5rem 0;font-size:0.9rem;color:#b0b0b0;line-height:1.8">
-                    <div>&#10003; Unlimited imports forever</div>
-                    <div>&#10003; All future updates free</div>
-                    <div>&#10003; Pioneer USB + XML + M3U8</div>
-                    <div>&#10003; CUE points, BPM, KEY, playlists</div>
-                    <div>&#10003; Hardware-bound license key</div>
+            <div class="section-header">
+                <div class="section-label">Pricing</div>
+                <h2>One price. Forever yours.</h2>
+            </div>
+            <div class="pricing-wrapper reveal">
+                <div class="pricing-card">
+                    <h3>Lifetime License</h3>
+                    <div class="price-row">
+                        <span class="price-amount">$10</span>
+                        <span class="price-currency">USDT</span>
+                    </div>
+                    <div class="price-desc">Pay once &mdash; use forever. No subscription.</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature"><span class="pf-icon">&#10003;</span>Unlimited imports</div>
+                        <div class="pricing-feature"><span class="pf-icon">&#10003;</span>All future updates</div>
+                        <div class="pricing-feature"><span class="pf-icon">&#10003;</span>Pioneer USB + XML + M3U8</div>
+                        <div class="pricing-feature"><span class="pf-icon">&#10003;</span>CUE points, BPM, keys, playlists</div>
+                        <div class="pricing-feature"><span class="pf-icon">&#10003;</span>Hardware-bound license key</div>
+                    </div>
+                    <form class="buy-form" id="buyForm" onsubmit="handlePurchase(event)">
+                        <input type="email" id="buyEmail" placeholder="Your email" required>
+                        <button type="submit" class="buy-btn" id="buyBtn">Pay $10 USDT &mdash; get key instantly</button>
+                    </form>
+                    <div class="buy-status" id="buyStatus"></div>
+                    <p class="buy-note">USDT (TRC-20) via NOWPayments. License key delivered to your email.<br>
+                    Already bought? <a href="#" onclick="resendKey(event)">Resend key</a></p>
                 </div>
-                <!-- Purchase form -->
-                <form id="buyForm" onsubmit="handlePurchase(event)" style="margin-top:1rem">
-                    <input type="email" id="buyEmail" placeholder="Your email" required
-                        style="width:100%;padding:0.8rem 1rem;margin-bottom:0.8rem;background:rgba(255,255,255,0.05);border:1px solid rgba(233,69,96,0.3);border-radius:6px;color:#fff;font-size:0.95rem;outline:none">
-                    <input type="text" id="buyMachineId" placeholder="Machine ID (from the app)" required minlength="10"
-                        style="width:100%;padding:0.8rem 1rem;margin-bottom:0.8rem;background:rgba(255,255,255,0.05);border:1px solid rgba(233,69,96,0.3);border-radius:6px;color:#fff;font-size:0.95rem;outline:none;font-family:monospace">
-                    <button type="submit" class="pricing-button" id="buyBtn">Pay $10 USDT — Get Key Instantly</button>
-                </form>
-                <div id="buyStatus" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.9rem"></div>
-                <p style="font-size:0.8rem;color:#666;margin-top:0.8rem">USDT (TRC-20). License key delivered to your email automatically.</p>
-                <p style="font-size:0.75rem;color:#555;margin-top:0.4rem">Already bought? <a href="#" onclick="resendKey(event)" style="color:#e94560">Resend key to email</a></p>
             </div>
 
-            <div style="max-width:700px;margin:3rem auto 0;text-align:center">
-                <h3 style="color:#fff;margin-bottom:1.5rem;font-size:1.3rem">Compare with alternatives</h3>
-                <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+            <div class="compare-section reveal">
+                <div class="section-header" style="margin-bottom:2rem;">
+                    <h2 style="font-size:1.3rem;">How we compare</h2>
+                </div>
+                <table class="compare-table">
                     <thead>
-                        <tr style="border-bottom:1px solid rgba(233,69,96,0.3)">
-                            <th style="padding:0.8rem;text-align:left;color:#888">Tool</th>
-                            <th style="padding:0.8rem;color:#888">Price</th>
-                            <th style="padding:0.8rem;color:#888">USB Import</th>
-                            <th style="padding:0.8rem;color:#888">CUE Points</th>
-                            <th style="padding:0.8rem;color:#888">Subscription</th>
+                        <tr>
+                            <th>Tool</th><th>Price</th><th>USB Import</th><th>CUEs</th><th>Subscription</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(233,69,96,0.05)">
-                            <td style="padding:0.8rem;color:#e94560;font-weight:600">Ours</td>
-                            <td style="padding:0.8rem;color:#fff;font-weight:600">$10</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#4ade80">No</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
-                            <td style="padding:0.8rem;color:#b0b0b0">DJCU</td>
-                            <td style="padding:0.8rem;color:#b0b0b0">$21</td>
-                            <td style="padding:0.8rem;color:#f87171">No</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#4ade80">No</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
-                            <td style="padding:0.8rem;color:#b0b0b0">Lexicon</td>
-                            <td style="padding:0.8rem;color:#b0b0b0">$10-20/mo</td>
-                            <td style="padding:0.8rem;color:#f87171">No</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#f87171">Yes</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
-                            <td style="padding:0.8rem;color:#b0b0b0">Rekordcloud</td>
-                            <td style="padding:0.8rem;color:#b0b0b0">$17/mo</td>
-                            <td style="padding:0.8rem;color:#f87171">No</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#f87171">Yes</td>
+                        <tr class="row-ours">
+                            <td><strong>R2S Converter</strong></td><td>$10</td>
+                            <td class="cell-yes">Yes</td><td class="cell-yes">Yes</td><td class="cell-yes">No</td>
                         </tr>
                         <tr>
-                            <td style="padding:0.8rem;color:#b0b0b0">DJ Cue Bridge</td>
-                            <td style="padding:0.8rem;color:#b0b0b0">Free</td>
-                            <td style="padding:0.8rem;color:#f87171">No</td>
-                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
-                            <td style="padding:0.8rem;color:#4ade80">No</td>
+                            <td>DJCU</td><td>$21</td>
+                            <td class="cell-no">No</td><td class="cell-yes">Yes</td><td class="cell-yes">No</td>
+                        </tr>
+                        <tr>
+                            <td>Lexicon</td><td>$10-20/mo</td>
+                            <td class="cell-no">No</td><td class="cell-yes">Yes</td><td class="cell-no">Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Rekordcloud</td><td>$17/mo</td>
+                            <td class="cell-no">No</td><td class="cell-yes">Yes</td><td class="cell-no">Yes</td>
+                        </tr>
+                        <tr>
+                            <td>DJ Cue Bridge</td><td>Free</td>
+                            <td class="cell-no">No</td><td class="cell-yes">Yes</td><td class="cell-yes">No</td>
                         </tr>
                     </tbody>
                 </table>
-                <p style="font-size:0.75rem;color:#555;margin-top:0.8rem">Only our tool imports directly from Pioneer USB flash drives</p>
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.8rem;text-align:center;">Only R2S imports directly from Pioneer USB flash drives</p>
             </div>
         </div>
     </section>
 
-    <section class="faq" id="faq">
+    <!-- ===== FAQ ===== -->
+    <section id="faq" style="background: var(--bg-elevated);">
         <div class="container">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-container">
+            <div class="section-header">
+                <div class="section-label">FAQ</div>
+                <h2>Common questions</h2>
+            </div>
+            <div class="faq-list">
                 <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Does it work with Rekordbox 7?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">Yes, we support USB export from Rekordbox 5, 6, and 7. Just export your playlists to a USB drive and we'll handle the rest.</div>
+                    <div class="faq-q"><span>Does it work with Rekordbox 7?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">Yes. We support USB exports from Rekordbox 5, 6, and 7.</div>
                 </div>
-
                 <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Will my CUE points transfer?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">Absolutely. All hot cues with their colors transfer to Serato. Everything is preserved exactly as you set it up.</div>
+                    <div class="faq-q"><span>Will my CUE points transfer?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">All hot cues with their colors transfer to Serato. Everything is preserved exactly as you set it up.</div>
                 </div>
-
                 <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Do I need to re-analyze tracks?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">No. We transfer BPM and KEY data directly from your Rekordbox library, so Serato gets the accurate info immediately.</div>
+                    <div class="faq-q"><span>Do I need to re-analyze tracks?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">No. BPM and key data transfer directly from your Rekordbox library.</div>
                 </div>
-
                 <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What macOS versions are supported?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">macOS 12 (Monterey) and later. We keep the app lightweight and modern by focusing on recent OS versions.</div>
+                    <div class="faq-q"><span>What macOS versions work?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">macOS 12 (Monterey) and later. Apple Silicon and Intel supported.</div>
                 </div>
-
                 <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Is there a Windows version?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">Not yet. We're macOS-focused for now, but we're exploring Windows support for the future. Let us know if you're interested!</div>
+                    <div class="faq-q"><span>How do I enter my license key?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">Open the app, go to Settings and paste the key from your email. It activates instantly.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q"><span>Is there a Windows version?</span><span class="faq-arrow">&#9662;</span></div>
+                    <div class="faq-a">Not yet. macOS only for now. Let us know if you want Windows support.</div>
                 </div>
             </div>
         </div>
@@ -714,71 +743,50 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Rekordbox → Serato. Made for DJs, by DJs.</p>
-            <p>Questions? <a href="https://t.me/rekordbox_to_serato" target="_blank">Telegram</a> &middot; <a href="mailto:djtools.dev@gmail.com">Email</a></p>
+            <p>&copy; 2026 R2S Converter. Made for DJs, by DJs.</p>
+            <p><a href="mailto:djtools.dev@gmail.com">djtools.dev@gmail.com</a></p>
         </div>
     </footer>
 
+    </div><!-- .relative -->
+
     <script>
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if (href !== '#' && document.querySelector(href)) {
-                    e.preventDefault();
-                    document.querySelector(href).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
+        // Intersection Observer for reveal animations
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+        // FAQ toggle
+        document.querySelectorAll('.faq-q').forEach(q => {
+            q.addEventListener('click', () => q.closest('.faq-item').classList.toggle('open'));
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
             });
         });
 
-        // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // FAQ toggle functionality
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', function() {
-                const item = this.closest('.faq-item');
-                item.classList.toggle('active');
-            });
-        });
-
-        // Payment API base URL — change to your server
+        // ===== PAYMENT =====
         const API_BASE = 'https://n8n66194.hostkey.in/pay';
 
         function showStatus(msg, isError) {
             const el = document.getElementById('buyStatus');
             el.style.display = 'block';
             el.textContent = msg;
-            el.style.background = isError ? 'rgba(248,113,113,0.15)' : 'rgba(74,222,128,0.15)';
-            el.style.border = `1px solid ${isError ? '#f87171' : '#4ade80'}`;
-            el.style.color = isError ? '#f87171' : '#4ade80';
+            el.style.background = isError ? 'rgba(255,107,107,0.1)' : 'rgba(0,206,201,0.1)';
+            el.style.border = `1px solid ${isError ? 'var(--red)' : 'var(--green)'}`;
+            el.style.color = isError ? 'var(--red)' : 'var(--green)';
         }
 
         async function handlePurchase(e) {
             e.preventDefault();
             const btn = document.getElementById('buyBtn');
             const email = document.getElementById('buyEmail').value.trim();
-            const machineId = document.getElementById('buyMachineId').value.trim();
-
-            if (!email || !machineId) return;
+            if (!email) return;
 
             btn.disabled = true;
             btn.textContent = 'Creating payment...';
@@ -787,56 +795,38 @@
                 const resp = await fetch(API_BASE + '/api/create-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, machine_id: machineId })
+                    body: JSON.stringify({ email })
                 });
                 const data = await resp.json();
-
-                if (data.error === 'already_licensed') {
-                    showStatus('This machine already has a license! Check your email.', false);
-                    btn.disabled = false;
-                    btn.textContent = 'Pay $10 USDT — Get Key Instantly';
-                    return;
-                }
                 if (data.error) {
-                    showStatus(data.error, true);
-                    btn.disabled = false;
-                    btn.textContent = 'Pay $10 USDT — Get Key Instantly';
+                    showStatus(data.error, data.error !== 'already_licensed');
+                    btn.disabled = false; btn.textContent = 'Pay $10 USDT \u2014 get key instantly';
                     return;
                 }
-
                 if (data.payment_url) {
                     showStatus('Redirecting to payment...', false);
                     window.location.href = data.payment_url;
                 }
             } catch (err) {
                 showStatus('Connection error. Try again.', true);
-                btn.disabled = false;
-                btn.textContent = 'Pay $10 USDT — Get Key Instantly';
+                btn.disabled = false; btn.textContent = 'Pay $10 USDT \u2014 get key instantly';
             }
         }
 
         async function resendKey(e) {
             e.preventDefault();
             const email = document.getElementById('buyEmail').value.trim();
-            const machineId = document.getElementById('buyMachineId').value.trim();
-            if (!email || !machineId) {
-                showStatus('Enter your email and Machine ID above first.', true);
-                return;
-            }
+            if (!email) { showStatus('Enter your email first.', true); return; }
             try {
                 const resp = await fetch(API_BASE + '/api/check-key', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, machine_id: machineId })
+                    body: JSON.stringify({ email })
                 });
                 const data = await resp.json();
-                if (data.found) {
-                    showStatus(data.message, false);
-                } else {
-                    showStatus('No license found for this machine. Buy one above!', true);
-                }
+                showStatus(data.found ? data.message : 'No license found for this email.', !data.found);
             } catch (err) {
-                showStatus('Connection error. Try again.', true);
+                showStatus('Connection error.', true);
             }
         }
     </script>
