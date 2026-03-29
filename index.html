@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekordbox → Serato | Convert Your DJ Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(15, 15, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
+        }
+
+        header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        header .logo span {
+            color: #e94560;
+        }
+
+        header nav a {
+            color: #b0b0b0;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #e94560;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 5rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 7rem 2rem;
+            background: linear-gradient(180deg, rgba(233, 69, 96, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            line-height: 1.2;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(233, 69, 96, 0.3);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* Features Section */
+        .features {
+            background: rgba(26, 26, 46, 0.5);
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(233, 69, 96, 0.5);
+            background: rgba(26, 26, 46, 1);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: rgba(26, 26, 46, 0.3);
+        }
+
+        .how-it-works h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #ffffff;
+        }
+
+        .step p {
+            color: #a0a0a0;
+        }
+
+        /* What Gets Transferred */
+        .what-transfers {
+            background: rgba(26, 26, 46, 0.5);
+        }
+
+        .what-transfers h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .checklist {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(233, 69, 96, 0.1);
+            color: #e0e0e0;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-icon {
+            color: #e94560;
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: rgba(26, 26, 46, 0.3);
+            text-align: center;
+        }
+
+        .pricing h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .pricing-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid rgba(233, 69, 96, 0.3);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(233, 69, 96, 0.7);
+            background: rgba(26, 26, 46, 1);
+        }
+
+        .price {
+            font-size: 3.5rem;
+            color: #e94560;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .price-label {
+            font-size: 1rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+        }
+
+        .trial-note {
+            background: rgba(233, 69, 96, 0.1);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        .pricing-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #e94560 0%, #ff5a7a 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(233, 69, 96, 0.3);
+        }
+
+        /* FAQ Section */
+        .faq {
+            background: rgba(26, 26, 46, 0.5);
+        }
+
+        .faq h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .faq-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(26, 26, 46, 0.7);
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #ffffff;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: #a0a0a0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 15, 30, 0.95);
+            border-top: 1px solid rgba(233, 69, 96, 0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #808080;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ff5a7a;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Intersection Observer animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .features h2,
+            .how-it-works h2,
+            .what-transfers h2,
+            .pricing h2,
+            .faq h2 {
+                font-size: 2rem;
+            }
+
+            header nav {
+                display: none;
+            }
+
+            section {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero {
+                padding: 5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Rekordbox → <span>Serato</span></div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#how">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+                <a href="ru.html" style="padding:0.3rem 0.8rem;border:1px solid rgba(233,69,96,0.3);border-radius:4px;font-size:0.85rem">RU</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="buy">
+        <h1>Switch DJ software without losing your library</h1>
+        <p>Tired of the tedious process of migrating from Rekordbox to Serato? We make it painless. Transfer your playlists, cue points, and metadata in seconds.</p>
+        <a href="#pricing" class="cta-button">Buy Now — $10 USDT</a>
+        <p style="font-size:0.85rem;color:#666;margin-top:1rem;animation:fadeInUp 0.8s ease 0.6s both">Free trial: 10 tracks included, no credit card needed</p>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Why DJs Love Us</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">💾</div>
+                    <h3>Pioneer USB Import</h3>
+                    <p>Direct import from Pioneer flash drives. No confusing database formats or manual parsing.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Full Metadata Transfer</h3>
+                    <p>BPM, KEY, hot cues, and playlists preserved exactly as you configured them.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">⚡</div>
+                    <h3>One-Click Migration</h3>
+                    <p>No manual work, no re-analysis needed. Your library is ready to go immediately.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🍎</div>
+                    <h3>macOS Native</h3>
+                    <p>Clean dark UI, lightweight, fast. No Java dependencies or bloatware.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Plug in your Pioneer USB</h3>
+                    <p>Connect your USB flash drive with your Rekordbox library</p>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <h3>Click Import</h3>
+                    <p>Select the playlists and collections you want to transfer</p>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <h3>Open Serato — everything is there</h3>
+                    <p>Your library, cues, BPM, keys, all ready to perform</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="what-transfers">
+        <div class="container">
+            <h2>What Gets Transferred</h2>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <div class="checklist-icon">✅</div>
+                    <span>Playlists with track order</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon">✅</div>
+                    <span>Hot cue points (all colors)</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon">✅</div>
+                    <span>BPM and KEY</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon">✅</div>
+                    <span>Track metadata (artist, title, album, genre)</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon">✅</div>
+                    <span>Works with AIFF, MP3, M4A, FLAC, WAV</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Get Started</h2>
+            <div class="pricing-card fade-in">
+                <h3>One-Time Purchase</h3>
+                <div class="price">$10 <span style="font-size:1.2rem;color:#a0a0a0">USDT</span></div>
+                <div class="price-label">Pay once — use forever. No subscription.</div>
+                <div class="trial-note">Free trial: 10 tracks included. No registration.</div>
+                <div style="text-align:left;margin:1.5rem 0;font-size:0.9rem;color:#b0b0b0;line-height:1.8">
+                    <div>&#10003; Unlimited imports forever</div>
+                    <div>&#10003; All future updates free</div>
+                    <div>&#10003; Pioneer USB + XML + M3U8</div>
+                    <div>&#10003; CUE points, BPM, KEY, playlists</div>
+                    <div>&#10003; Hardware-bound license key</div>
+                </div>
+                <!-- Purchase form -->
+                <form id="buyForm" onsubmit="handlePurchase(event)" style="margin-top:1rem">
+                    <input type="email" id="buyEmail" placeholder="Your email" required
+                        style="width:100%;padding:0.8rem 1rem;margin-bottom:0.8rem;background:rgba(255,255,255,0.05);border:1px solid rgba(233,69,96,0.3);border-radius:6px;color:#fff;font-size:0.95rem;outline:none">
+                    <input type="text" id="buyMachineId" placeholder="Machine ID (from the app)" required minlength="10"
+                        style="width:100%;padding:0.8rem 1rem;margin-bottom:0.8rem;background:rgba(255,255,255,0.05);border:1px solid rgba(233,69,96,0.3);border-radius:6px;color:#fff;font-size:0.95rem;outline:none;font-family:monospace">
+                    <button type="submit" class="pricing-button" id="buyBtn">Pay $10 USDT — Get Key Instantly</button>
+                </form>
+                <div id="buyStatus" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.9rem"></div>
+                <p style="font-size:0.8rem;color:#666;margin-top:0.8rem">USDT (TRC-20). License key delivered to your email automatically.</p>
+                <p style="font-size:0.75rem;color:#555;margin-top:0.4rem">Already bought? <a href="#" onclick="resendKey(event)" style="color:#e94560">Resend key to email</a></p>
+            </div>
+
+            <div style="max-width:700px;margin:3rem auto 0;text-align:center">
+                <h3 style="color:#fff;margin-bottom:1.5rem;font-size:1.3rem">Compare with alternatives</h3>
+                <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+                    <thead>
+                        <tr style="border-bottom:1px solid rgba(233,69,96,0.3)">
+                            <th style="padding:0.8rem;text-align:left;color:#888">Tool</th>
+                            <th style="padding:0.8rem;color:#888">Price</th>
+                            <th style="padding:0.8rem;color:#888">USB Import</th>
+                            <th style="padding:0.8rem;color:#888">CUE Points</th>
+                            <th style="padding:0.8rem;color:#888">Subscription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(233,69,96,0.05)">
+                            <td style="padding:0.8rem;color:#e94560;font-weight:600">Ours</td>
+                            <td style="padding:0.8rem;color:#fff;font-weight:600">$10</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#4ade80">No</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                            <td style="padding:0.8rem;color:#b0b0b0">DJCU</td>
+                            <td style="padding:0.8rem;color:#b0b0b0">$21</td>
+                            <td style="padding:0.8rem;color:#f87171">No</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#4ade80">No</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                            <td style="padding:0.8rem;color:#b0b0b0">Lexicon</td>
+                            <td style="padding:0.8rem;color:#b0b0b0">$10-20/mo</td>
+                            <td style="padding:0.8rem;color:#f87171">No</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#f87171">Yes</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                            <td style="padding:0.8rem;color:#b0b0b0">Rekordcloud</td>
+                            <td style="padding:0.8rem;color:#b0b0b0">$17/mo</td>
+                            <td style="padding:0.8rem;color:#f87171">No</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#f87171">Yes</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.8rem;color:#b0b0b0">DJ Cue Bridge</td>
+                            <td style="padding:0.8rem;color:#b0b0b0">Free</td>
+                            <td style="padding:0.8rem;color:#f87171">No</td>
+                            <td style="padding:0.8rem;color:#4ade80">Yes</td>
+                            <td style="padding:0.8rem;color:#4ade80">No</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.75rem;color:#555;margin-top:0.8rem">Only our tool imports directly from Pioneer USB flash drives</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Does it work with Rekordbox 7?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">Yes, we support USB export from Rekordbox 5, 6, and 7. Just export your playlists to a USB drive and we'll handle the rest.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Will my CUE points transfer?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">Absolutely. All hot cues with their colors transfer to Serato. Everything is preserved exactly as you set it up.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need to re-analyze tracks?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">No. We transfer BPM and KEY data directly from your Rekordbox library, so Serato gets the accurate info immediately.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What macOS versions are supported?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">macOS 12 (Monterey) and later. We keep the app lightweight and modern by focusing on recent OS versions.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is there a Windows version?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">Not yet. We're macOS-focused for now, but we're exploring Windows support for the future. Let us know if you're interested!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Rekordbox → Serato. Made for DJs, by DJs.</p>
+            <p>Questions? <a href="https://t.me/rekordbox_to_serato" target="_blank">Telegram</a> &middot; <a href="mailto:djtools.dev@gmail.com">Email</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.closest('.faq-item');
+                item.classList.toggle('active');
+            });
+        });
+
+        // Payment API base URL — change to your server
+        const API_BASE = 'https://n8n66194.hostkey.in/pay';
+
+        function showStatus(msg, isError) {
+            const el = document.getElementById('buyStatus');
+            el.style.display = 'block';
+            el.textContent = msg;
+            el.style.background = isError ? 'rgba(248,113,113,0.15)' : 'rgba(74,222,128,0.15)';
+            el.style.border = `1px solid ${isError ? '#f87171' : '#4ade80'}`;
+            el.style.color = isError ? '#f87171' : '#4ade80';
+        }
+
+        async function handlePurchase(e) {
+            e.preventDefault();
+            const btn = document.getElementById('buyBtn');
+            const email = document.getElementById('buyEmail').value.trim();
+            const machineId = document.getElementById('buyMachineId').value.trim();
+
+            if (!email || !machineId) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Creating payment...';
+
+            try {
+                const resp = await fetch(API_BASE + '/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, machine_id: machineId })
+                });
+                const data = await resp.json();
+
+                if (data.error === 'already_licensed') {
+                    showStatus('This machine already has a license! Check your email.', false);
+                    btn.disabled = false;
+                    btn.textContent = 'Pay $10 USDT — Get Key Instantly';
+                    return;
+                }
+                if (data.error) {
+                    showStatus(data.error, true);
+                    btn.disabled = false;
+                    btn.textContent = 'Pay $10 USDT — Get Key Instantly';
+                    return;
+                }
+
+                if (data.payment_url) {
+                    showStatus('Redirecting to payment...', false);
+                    window.location.href = data.payment_url;
+                }
+            } catch (err) {
+                showStatus('Connection error. Try again.', true);
+                btn.disabled = false;
+                btn.textContent = 'Pay $10 USDT — Get Key Instantly';
+            }
+        }
+
+        async function resendKey(e) {
+            e.preventDefault();
+            const email = document.getElementById('buyEmail').value.trim();
+            const machineId = document.getElementById('buyMachineId').value.trim();
+            if (!email || !machineId) {
+                showStatus('Enter your email and Machine ID above first.', true);
+                return;
+            }
+            try {
+                const resp = await fetch(API_BASE + '/api/check-key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, machine_id: machineId })
+                });
+                const data = await resp.json();
+                if (data.found) {
+                    showStatus(data.message, false);
+                } else {
+                    showStatus('No license found for this machine. Buy one above!', true);
+                }
+            } catch (err) {
+                showStatus('Connection error. Try again.', true);
+            }
+        }
+    </script>
+</body>
+</html>
