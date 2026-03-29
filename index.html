@@ -3,7 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekordbox to Serato | Migrate Your DJ Library</title>
+    <title>Rekordbox to Serato Converter | Migrate DJ Library, Cues, BPM</title>
+    <meta name="description" content="Convert your Rekordbox DJ library to Serato in seconds. Transfer playlists, hot cues, BPM, keys from Pioneer USB. macOS app. Free trial.">
+    <meta name="keywords" content="rekordbox to serato, convert rekordbox, pioneer usb serato, dj library migration, hot cues transfer, rekordbox serato converter">
+    <meta name="author" content="R2S Converter">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://noveft91.github.io/rekordbox-to-serato/">
+    <link rel="alternate" hreflang="en" href="https://noveft91.github.io/rekordbox-to-serato/">
+    <link rel="alternate" hreflang="ru" href="https://noveft91.github.io/rekordbox-to-serato/ru.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rekordbox to Serato Converter | Migrate Your DJ Library">
+    <meta property="og:description" content="Transfer playlists, hot cues, BPM and keys from Pioneer USB to Serato. macOS native app. Free trial.">
+    <meta property="og:url" content="https://noveft91.github.io/rekordbox-to-serato/">
+    <meta property="og:site_name" content="R2S Converter">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rekordbox to Serato Converter">
+    <meta name="twitter:description" content="Transfer playlists, hot cues, BPM and keys from Pioneer USB to Serato in seconds.">
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "R2S Converter",
+        "description": "Convert Rekordbox DJ library to Serato. Transfer playlists, hot cues, BPM and keys from Pioneer USB.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "macOS 12+",
+        "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD"
+        },
+        "softwareVersion": "1.0",
+        "author": {
+            "@type": "Organization",
+            "name": "R2S Converter"
+        }
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -786,11 +834,18 @@
             el.style.color = isError ? 'var(--red)' : 'var(--green)';
         }
 
+        function isValidEmail(e) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 254;
+        }
+
         async function handlePurchase(e) {
             e.preventDefault();
             const btn = document.getElementById('buyBtn');
-            const email = document.getElementById('buyEmail').value.trim();
-            if (!email) return;
+            const email = document.getElementById('buyEmail').value.trim().toLowerCase();
+            if (!email || !isValidEmail(email)) {
+                showStatus('Please enter a valid email address.', true);
+                return;
+            }
 
             btn.disabled = true;
             btn.textContent = 'Creating payment...';

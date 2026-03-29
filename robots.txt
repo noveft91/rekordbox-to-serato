@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://noveft91.github.io/rekordbox-to-serato/sitemap.xml
