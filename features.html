@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R2S Converter Features | Hot Cues, Playlists, BPM Transfer</title>
+    <meta name="description" content="Transfer hot cues with colors, playlists to crates, BPM, musical keys from Rekordbox to Serato. Native macOS app. Works with Pioneer USB drives.">
+    <meta name="keywords" content="rekordbox hot cues to serato, transfer playlists rekordbox serato, pioneer usb serato converter, dj library migration tool">
+    <meta name="author" content="R2S Converter">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://r2s.pro/features.html">
+    <link rel="alternate" hreflang="en" href="https://r2s.pro/features.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="R2S Converter Features | Hot Cues, Playlists, BPM Transfer">
+    <meta property="og:description" content="Transfer hot cues with colors, playlists to crates, BPM, musical keys from Rekordbox to Serato. Native macOS app. Works with Pioneer USB drives.">
+    <meta property="og:url" content="https://r2s.pro/features.html">
+    <meta property="og:site_name" content="R2S Converter">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="R2S Converter Features">
+    <meta name="twitter:description" content="Transfer hot cues with colors, playlists to crates, BPM, musical keys from Rekordbox to Serato.">
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Structured Data: Product -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "R2S Converter",
+        "description": "Fast Rekordbox to Serato converter. Transfers hot cues, playlists, BPM, keys from Pioneer USB drives.",
+        "image": "https://r2s.pro/og-image.jpg",
+        "brand": {
+            "@type": "Brand",
+            "name": "R2S Converter"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "10",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "150"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #08080a;
+            --bg-elevated: rgba(255,255,255,0.03);
+            --bg-card: rgba(255,255,255,0.05);
+            --bg-card-hover: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --text-primary: #f0f0f0;
+            --text-secondary: #8a8f98;
+            --text-muted: #55585e;
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --accent-glow: rgba(108,92,231,0.3);
+            --green: #00cec9;
+            --green-glow: rgba(0,206,201,0.2);
+            --red: #ff6b6b;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== MESH GRADIENT BACKGROUND ===== */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-mesh::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            top: -200px; left: -200px;
+            background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, transparent 70%);
+            animation: float1 20s ease-in-out infinite;
+        }
+        .bg-mesh::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            bottom: -100px; right: -100px;
+            background: radial-gradient(circle, rgba(0,206,201,0.1) 0%, transparent 70%);
+            animation: float2 25s ease-in-out infinite;
+        }
+        @keyframes float1 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(100px,50px) scale(1.1); }
+            66% { transform: translate(-50px,100px) scale(0.9); }
+        }
+        @keyframes float2 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(-80px,-40px) scale(1.15); }
+            66% { transform: translate(60px,-80px) scale(0.95); }
+        }
+
+        /* ===== GRAIN OVERLAY ===== */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.4;
+        }
+
+        /* ===== LAYOUT ===== */
+        .relative { position: relative; z-index: 2; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 2rem; }
+        section { padding: 6rem 0; }
+
+        /* ===== HEADER ===== */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(8,8,10,0.7);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        header .container {
+            display: flex; justify-content: space-between; align-items: center;
+            height: 64px;
+        }
+        .logo {
+            font-size: 1.1rem; font-weight: 700; color: var(--text-primary);
+            letter-spacing: -0.3px;
+            text-decoration: none;
+        }
+        .logo span { color: var(--accent-light); }
+        nav { display: flex; align-items: center; gap: 2rem; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.875rem; font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a:hover { color: var(--text-primary); }
+        nav a.active { color: var(--accent-light); }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a29bfe 50%, #00cec9 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 600;
+            text-decoration: none;
+            cursor: pointer; border: none;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            background: #7c6ef0;
+            box-shadow: 0 0 50px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ===== FEATURE CARDS ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(108,92,231,0.1);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ===== COMPARISON TABLE ===== */
+        .features-compare {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .compare-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 700px;
+        }
+        .compare-table th {
+            padding: 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--bg-card);
+        }
+        .compare-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table .cell-yes { color: var(--green); font-weight: 600; }
+        .compare-table .cell-no { color: var(--red); }
+        .compare-table .cell-partial { color: var(--accent-light); }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-label {
+            font-size: 0.75rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--accent-light);
+            margin-bottom: 0.8rem;
+        }
+        section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 1.2rem;
+            letter-spacing: -0.02em;
+            text-align: center;
+        }
+
+        /* ===== PROCESS STEPS ===== */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .step {
+            text-align: center;
+            position: relative;
+        }
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 100%;
+            width: 30px;
+            height: 2px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+        .step:last-child::after {
+            display: none;
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .step h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .step p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ===== PRICING SECTION ===== */
+        .pricing-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2.5rem;
+            text-align: center;
+            max-width: 500px;
+            margin: 3rem auto;
+        }
+        .price-tag {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-light);
+            margin-bottom: 0.5rem;
+        }
+        .price-currency {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-right: 0.3rem;
+        }
+        .pricing-box p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        .pricing-features {
+            text-align: left;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+        }
+        .pricing-features li {
+            list-style: none;
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            background: rgba(108,92,231,0.1);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .info-box strong {
+            display: block;
+            color: var(--accent-light);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .info-box p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin: 4rem 0;
+        }
+        .cta-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .cta-section p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+            text-align: center;
+        }
+        footer p {
+            font-size: 0.8rem; color: var(--text-muted);
+            margin: 0.3rem 0;
+        }
+        footer a { color: var(--text-secondary); text-decoration: none; }
+        footer a:hover { color: var(--text-primary); }
+
+        /* ===== ANIMATIONS ===== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            section { padding: 4rem 0; }
+            .hero { padding: 5rem 0 3rem; }
+            section h2 { font-size: 1.5rem; }
+            .features-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .compare-table { font-size: 0.75rem; }
+            .compare-table th, .compare-table td { padding: 0.7rem; }
+            .cta-section { padding: 2rem 1.5rem; }
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .step::after {
+                display: none;
+            }
+            .pricing-box {
+                padding: 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            nav .nav-hide { display: none; }
+            .info-box { padding: 1rem; }
+            .features-grid { padding: 0 0.5rem; }
+            .pricing-box { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+    <div class="relative">
+
+    <header>
+        <div class="container">
+            <a href="/" class="logo">R2S <span>converter</span></a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/features.html" class="active">Features</a>
+                <a href="/faq.html">FAQ</a>
+                <a href="/#pricing">Pricing</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" style="position:relative;overflow:hidden;">
+        <img src="img/features-hero.png" alt="DJ controller pads glowing with vibrant colors" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.3;z-index:0;">
+        <div class="container" style="position:relative;z-index:1;">
+            <h1>Every Detail of Your Library, Perfectly Transferred</h1>
+            <p>Hot cues with colors, playlists as crates, BPM, musical keys, and complete metadata. All transferred in seconds.</p>
+        </div>
+    </section>
+
+    <!-- ===== MAIN FEATURES ===== -->
+    <section>
+        <div class="container">
+            <div class="section-label">Core Capabilities</div>
+            <h2>What R2S Converter Transfers</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3>Hot Cue Transfer</h3>
+                    <p>Positions, colors, and up to 8 cues per track transfer perfectly to Serato. Your hot cues are ready to mix.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <h3>Playlist → Crate Conversion</h3>
+                    <p>Folder structure preserved. Nested playlists become subcrates automatically. Your library organization stays intact.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">♪</span>
+                    <h3>BPM & Key Data</h3>
+                    <p>Exact tempo and musical key values carry over. No re-analysis needed. Serato reads your metadata immediately.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">💾</span>
+                    <h3>Pioneer USB Direct Read</h3>
+                    <p>Plug in your Pioneer USB drive or select your export folder. R2S reads directly — no Rekordbox needed.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Batch Processing</h3>
+                    <p>Convert your entire library in seconds. 5,000+ tracks? Done in under 2 minutes. Fast processing. No bottlenecks.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🍎</span>
+                    <h3>macOS Native</h3>
+                    <p>Built for Mac. No Java. No emulation. No Wine layer. Lightweight, fast, and optimized for your system.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHAT TRANSFERS TABLE ===== -->
+    <section>
+        <div class="container">
+            <div class="section-label">Data Compatibility</div>
+            <h2>What Gets Transferred</h2>
+
+            <div class="features-compare">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Rekordbox</th>
+                            <th>Serato</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hot Cues</strong></td>
+                            <td>✓ Full data</td>
+                            <td>✓ Full support</td>
+                            <td class="cell-yes">✅ Complete</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hot Cue Colors</strong></td>
+                            <td>✓ 8 colors</td>
+                            <td>✓ 8 colors</td>
+                            <td class="cell-yes">✅ Perfect match</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Playlists</strong></td>
+                            <td>✓ Folders + tracks</td>
+                            <td>✓ Crates + subcrates</td>
+                            <td class="cell-yes">✅ Preserved</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BPM</strong></td>
+                            <td>✓ Analyzed or manual</td>
+                            <td>✓ Uses imported value</td>
+                            <td class="cell-yes">✅ Exact</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Musical Key</strong></td>
+                            <td>✓ Camelot + standard</td>
+                            <td>✓ Camelot + standard</td>
+                            <td class="cell-yes">✅ Perfect</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Metadata</strong></td>
+                            <td>✓ Artist, title, album</td>
+                            <td>✓ All fields</td>
+                            <td class="cell-yes">✅ Complete</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ratings</strong></td>
+                            <td>✓ Star ratings</td>
+                            <td>✓ 1-5 stars</td>
+                            <td class="cell-yes">✅ Preserved</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Cues (loops)</strong></td>
+                            <td>✓ Stored</td>
+                            <td>✗ Different format</td>
+                            <td class="cell-no">❌ Not supported</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beat Grids</strong></td>
+                            <td>✓ Custom grids</td>
+                            <td>✗ Re-analyzes</td>
+                            <td class="cell-partial">⚠️ Fresh analysis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance Effects</strong></td>
+                            <td>✓ Effect chains</td>
+                            <td>✗ Different engine</td>
+                            <td class="cell-no">❌ Not applicable</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <strong>Auto-Analysis:</strong>
+                <p>Serato automatically re-analyzes waveforms and beat grids for any tracks it doesn't recognize within 24 hours. This happens in the background and requires no action from you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section>
+        <div class="container">
+            <div class="section-label">Get Started</div>
+            <h2>How It Works</h2>
+
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Plug USB</h4>
+                    <p>Connect your Pioneer USB or select your Rekordbox export folder</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Click Convert</h4>
+                    <p>R2S analyzes your library and converts to Serato format instantly</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Mix in Serato</h4>
+                    <p>Open your new Serato library with all cues, playlists, and metadata intact</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section>
+        <div class="container">
+            <div class="section-label">Simple Pricing</div>
+            <h2>One-Time Payment, Unlimited Conversions</h2>
+
+            <div class="pricing-box reveal">
+                <div class="price-tag"><span class="price-currency">$</span>10</div>
+                <p>One-time payment. No subscriptions. No limits.</p>
+
+                <ul class="pricing-features">
+                    <li>Unlimited library conversions</li>
+                    <li>Hardware-bound license (your Mac forever)</li>
+                    <li>All future updates included</li>
+                    <li>Full technical support</li>
+                    <li>Works offline after activation</li>
+                </ul>
+
+                <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    <p style="margin-bottom: 0.8rem;">Free Trial Available</p>
+                    <p style="margin: 0;">Convert up to 10 tracks with full features. No credit card required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section>
+        <div class="container">
+            <div class="cta-section reveal">
+                <h3>Ready to Migrate Your Library?</h3>
+                <p>Start your Serato migration today. Try R2S Converter free with up to 10 tracks, then get unlimited conversions for just $10.</p>
+                <a href="https://r2s.pro" class="btn btn-primary">Download R2S Converter Free</a>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Free trial • No registration • $10 for unlimited conversions</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 R2S Converter. Made for DJs, by DJs.</p>
+            <p><a href="https://t.me/r2s_converter">Join us on Telegram</a> &middot; <a href="mailto:support@r2s.pro">support@r2s.pro</a></p>
+        </div>
+    </footer>
+
+    </div>
+</body>
+</html>
